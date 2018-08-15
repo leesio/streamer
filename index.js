@@ -1,14 +1,15 @@
-const Pusher = require('pusher')
-const sources = require('./sources')
-const http = require('http')
+const Pusher = require('pusher');
+const sources = require('./sources');
+const http = require('http');
+const fs = require('fs');
 
 const pusher = new Pusher({
-  appId: '571204',
-  key: 'e8f388c50dfc938652ce',
-  secret: process.env.SECRET,
-  cluster: 'eu',
-  encrypted: true,
-})
+  appId: process.env.PUSHER_APP_ID,
+  key: process.env.PUSHER_APP_KEY,
+  secret: process.env.PUSHER_APP_SECRET,
+  cluster: process.env.PUSHER_CLUSTER,
+  forceTLS: true,
+});
 
 const channels = Object.keys(sources)
 const run = () =>
