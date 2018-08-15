@@ -19,25 +19,16 @@ const run = () => {
   );
 };
 
-setInterval(run, 3000 + Math.random() * 2000)
+const startHttpServer = () => {
+  let template = fs.readFileSync('index.html');
+  http
+    .createServer((req, res) => {
+      res.setHeader('content-type', 'text/html');
+      res.write(template.toString().trim());
+      res.end();
+    })
+    .listen(process.env.PORT);
+};
 
-const template = `
---------------------------------------------------
-To get started, copy and paste the below code
-into a html file or try it online here:
-https://codepen.io/lukejacksonn/pen/VBdeOa
---------------------------------------------------
-
-<script src="https://js.pusher.com/4.2/pusher.min.js"></script>
-<script>
-  var pusher = new Pusher('e8f388c50dfc938652ce', { cluster: 'eu' })
-  pusher.subscribe('bitcoin').bind('default', console.log)
-</script>
-`
-
-http
-  .createServer((req, res) => {
-    res.write(template.trim())
-    res.end()
-  })
-  .listen(process.env.PORT)
+setInterval(run, 3000 + Math.random() * 2000);
+startHttpServer();
