@@ -4,6 +4,10 @@
     "pusher": "^2.1.2"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "deploy": "now --docker --public --dotenv"
+  },
+  "devDependencies": {
+    "now": "^11.3.10"
   }
 }
