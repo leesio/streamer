@@ -1,5 +1,82 @@
-<script src="https://js.pusher.com/4.2/pusher.min.js"></script>
-<script>
-var pusher = new Pusher('e8f388c50dfc938652ce', { cluster: 'eu' })
-pusher.subscribe('bitcoin').bind('default', console.log)
-</script>
+<html>
+  <head>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        font-weight: bold;
+        font-family: sans-serif;
+        font-size: 4vw;
+        padding: 10vw;
+      }
+
+      body > output {
+        max-width: 40ex;
+        margin: auto;
+        text-align: center;
+        line-height: 138%;
+        transition: all .5s;
+      }
+    </style>
+    <script src="https://js.pusher.com/4.2/pusher.min.js"></script>
+  </head>
+  <body>
+    <output>Waiting...</output>
+  </body>
+  <script>
+    const pusher = new Pusher('ff49622de873b6cf8048', { cluster: 'mt1' })
+    const output = document.querySelector("output")
+    const animate = () => {
+      output.style.transition =  'none';
+      output.style.opacity = 0
+      output.style.transform = 'scale(0.8)'
+      setTimeout(() => {
+        output.style.transition =  'all .5s';
+        output.style.opacity = 1
+        output.style.transform = 'scale(1)'
+      }, 500)
+    }
+    const reset = () => {
+      output.style.color = 'black';
+      let cards = document.querySelectorAll('.card')
+      cards.forEach((n) => {
+        output.removeChild(n)
+      });
+    }
+    const replaceData = (newValue) => {
+      reset();
+      output.innerText = newValue;
+      animate()
+    }
+    const callbacks = {
+      'venmo': (venmoData) => {
+        let venmoStr = `${venmoData.from} -> ${venmoData.to}: ${venmoData.message}`;
+        replaceData(venmoStr)
+      },
+      'color': (color) => {
+        output.style.color = color;
+      },
+      'card': (card) => {
+        let el = document.createElement('IMG');
+        let at = document.createAttribute('src')
+        at.value = card.images.png;
+        el.attributes.setNamedItem(at)
+        el.classList.add("card")
+        replaceData('');
+        output.appendChild(el)
+      },
+      'default': replaceData,
+    };
+    let channels = ['fact', 'time', 'name', 'percent', 'bitcoin', 'venmo', 'color', 'card', 'date'];
+    channels.map((channel) => {
+      let callback;
+      if(channel in callbacks) callback = callbacks[channel]
+      else callback = callbacks['default']
+      pusher.subscribe(channel).bind('default', callback);
+    });
+  </script>
+</html>
