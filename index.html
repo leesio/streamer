@@ -28,7 +28,7 @@
     <output>Waiting...</output>
   </body>
   <script>
-    const pusher = new Pusher('ff49622de873b6cf8048', { cluster: 'mt1' })
+    const pusher = new Pusher('01cb304f221c96268684', { wsHost: 'ws-test1.staging.pusher.com' })
     const output = document.querySelector("output")
     const animate = () => {
       output.style.transition =  'none';
@@ -76,7 +76,7 @@
       let callback;
       if(channel in callbacks) callback = callbacks[channel]
       else callback = callbacks['default']
-      pusher.subscribe(channel).bind('default', callback);
+      pusher.subscribe(`private-${channel}`).bind('default', callback);
     });
   </script>
 </html>
