@@ -11,11 +11,13 @@ const pusher = new Pusher({
   forceTLS: true,
 });
 
-const channels = Object.keys(sources)
-const run = () =>
-  Promise.all(Object.values(sources).map(x => x())).then(values =>
-    values.map((payload, i) => pusher.trigger(channels[i], 'default', payload))
-  )
+const sourceKeys = Object.keys(sources);
+const run = () => {
+  let idx = (Math.random() * sourceKeys.length) << 0;
+  Promise.resolve(sources[sourceKeys[idx]]()).then(payload =>
+    pusher.trigger(sourceKeys[idx], 'default', payload),
+  );
+};
 
 setInterval(run, 3000 + Math.random() * 2000)
 
